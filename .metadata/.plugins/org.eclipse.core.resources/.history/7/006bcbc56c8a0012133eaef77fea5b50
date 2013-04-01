@@ -1,0 +1,63 @@
+package com.usp.compress;
+
+import java.awt.image.BufferedImage;
+
+import org.encog.engine.network.activation.ActivationLinear;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.mathutil.matrices.Matrix;
+import org.encog.neural.data.NeuralData;
+import org.encog.neural.data.basic.BasicNeuralData;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.synapse.WeightedSynapse;
+
+import com.usp.image.Image;
+import com.usp.util.OneDArrayEquivalent;
+import com.usp.util.TwoDArrayEquivalent;
+
+public class ImageDecompress {
+
+	private OneDArrayEquivalent weights;
+	private TwoDArrayEquivalent input;
+	private int hiddenUnitsCount;
+	private int outputUnitsCount;
+
+	public ImageDecompress(OneDArrayEquivalent weights,
+			TwoDArrayEquivalent input,
+			int hiddenUnitsCount,
+			int outputUnitsCount) {
+		this.weights = weights;
+		this.input = input;
+		this.hiddenUnitsCount = hiddenUnitsCount;
+		this.outputUnitsCount = outputUnitsCount;
+	}
+	
+	public Image getImage(int imageWidth, int imageHeight) {
+		double[][] finalResult = new double[input.getRows()][input.getCols()];
+		
+		Double[] networkWeights = weights.getDoubleArray();
+	
+		
+		Matrix m = new Matrix(hiddenUnitsCount, outputUnitsCount);
+		m.fromPackedArray(networkWeights, 0);
+		
+		WeightedSynapse newSynapse = new WeightedSynapse(new BasicLayer(new ActivationSigmoid(), true, hiddenUnitsCount),
+			new BasicLayer(new ActivationLinear(), false, outputUnitsCount));
+		newSynapse.setMatrix(m);
+		double[][] intermediateResult = input.getDoubleEquivalent();
+		
+		int k = 0;
+		for (double d[] : intermediateResult) {
+			NeuralData intermediate = newSynapse.compute(new BasicNeuralData(d));
+			
+			NeuralData output = newSynapse.getToLayer().compute(intermediate);
+			
+			finalResult[k] = output.getData();
+			k++;
+			//finalResult[k] = network.compute(pair.getInput()).getData();
+		}
+		
+		//byte[] pixelData = CommonUtil.get1DArrayFrom2Darray(finalResult);
+		byte[] pixelData = new TwoDArrayEquivalent(finalResult).getBytes();
+		Image output = Image.getImage(pixelData, imageWidth, imageHeight, BufferedImage.TYPE_BYTE_GRAY);
+	}
+}

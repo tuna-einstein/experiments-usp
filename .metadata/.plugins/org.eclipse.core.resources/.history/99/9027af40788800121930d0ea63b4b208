@@ -1,0 +1,31 @@
+package com.usp.image;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Image {
+	private  BufferedImage bufferedImage;
+	
+	public Image(BufferedImage bufferedImage) {
+		this.bufferedImage = bufferedImage;
+	}
+
+	public Image(String imageFilePath) {
+		try {
+			this.bufferedImage = ImageIO.read(new File(imageFilePath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			bufferedImage = null;
+			e.printStackTrace();
+		}
+	}
+
+	public byte[] getByteArray() {
+		byte imageData[] = ((DataBufferByte) bufferedImage.getData().getDataBuffer()).getData();
+		return imageData;
+	}
+}

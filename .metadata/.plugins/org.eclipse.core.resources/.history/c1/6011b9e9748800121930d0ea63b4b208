@@ -1,0 +1,18 @@
+package com.usp.image;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+
+public class Image {
+	private final BufferedImage bufferedImage;
+	
+	public Image(BufferedImage bufferedImage) {
+		this.bufferedImage = bufferedImage;
+	}
+	
+	public Image(String imageFilePath) {
+		this.bufferedImage = ImageIO.read(new File(imageFilePath));
+	}
+}

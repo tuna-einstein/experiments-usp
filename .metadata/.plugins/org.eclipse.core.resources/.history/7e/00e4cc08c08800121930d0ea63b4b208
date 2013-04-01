@@ -1,0 +1,36 @@
+package com.usp.util;
+public class CommonUtil {
+
+	public static double[][] get2DArrayFrom1Darray(byte[] input, int columnSize) {
+		int length = input.length;
+		int rows = (int) (Math.ceil(length * 1.0 /columnSize));
+		double[][] result = new double[rows][columnSize];
+		int k = 0;
+		for (int i = 0; i < rows ; i++) {
+			for (int j = 0; j < columnSize; j++) {
+				if (k < length) {
+					result[i][j] = (input[k] - 127)/128.0;
+				} else {
+					result[i][j] = 0;
+				}
+
+				k++;
+			}
+		}
+		return result;
+	}
+
+	public static byte[] get1DArrayFrom2Darray(double[][] input) {
+		int rows = input.length;
+		int cols = input[0].length;
+		byte[] result = new byte[rows*cols];
+		int k = 0;
+		for (int i = 0; i < rows ; i++) {
+			for (int j = 0; j < cols; j++) {
+				result[k] = (byte) (input[i][j]*255);
+				k++;
+			}
+		}
+		return result;
+	}
+}

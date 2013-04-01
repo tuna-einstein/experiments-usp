@@ -1,0 +1,94 @@
+package com.usp.compress;
+
+import java.net.URL;
+
+import org.encog.engine.network.activation.ActivationLinear;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.mathutil.matrices.Matrix;
+import org.encog.neural.data.NeuralData;
+import org.encog.neural.data.NeuralDataPair;
+import org.encog.neural.data.NeuralDataSet;
+import org.encog.neural.data.basic.BasicNeuralDataSet;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.synapse.Synapse;
+import org.encog.neural.networks.synapse.WeightedSynapse;
+import org.encog.neural.networks.training.Train;
+import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.neural.networks.training.strategy.RequiredImprovementStrategy;
+import org.encog.util.logging.Logging;
+
+import com.usp.image.Image;
+import com.usp.util.CommonUtil;
+public class ImageCompress {
+	private static int BLOCK_SIZE = 16;
+	private static int COMPRESS = 4;
+	
+	
+	public static void main(final String args[]) {
+		Logging.stopConsoleLogging();
+		URL url = ImageCompress.class.getClassLoader().getResource("data/lena.bmp");
+        System.out.println(url.getPath());
+		Image image = new Image(url.getPath());
+		double[][] input = CommonUtil.get2DArrayFrom1Darray(image.getByteArray(), BLOCK_SIZE);
+		
+		BasicNetwork network = new BasicNetwork();
+		BasicLayer inputLayer = new BasicLayer(BLOCK_SIZE);
+		BasicLayer hiddenLayer = new BasicLayer(new ActivationSigmoid(), true, BLOCK_SIZE/COMPRESS);
+		BasicLayer outputLayer = new BasicLayer(new ActivationLinear(), true, BLOCK_SIZE);
+		
+		Synapse synapseInputToHidden = new WeightedSynapse(inputLayer,hiddenLayer); 
+		Synapse synapseHiddenToOutput = new WeightedSynapse(hiddenLayer,outputLayer); 
+		
+		inputLayer.getNext().add(synapseInputToHidden); 
+		hiddenLayer.getNext().add(synapseHiddenToOutput);
+		
+		network.tagLayer(BasicNetwork.TAG_INPUT, inputLayer);
+		network.tagLayer(BasicNetwork.TAG_OUTPUT, outputLayer);
+		network.getStructure().finalizeStructure();
+		network.reset();
+		
+		
+		NeuralDataSet trainingSet =
+		new BasicNeuralDataSet(input, input);
+		// train the neural network
+		final Train train = new ResilientPropagation(network, trainingSet);
+		
+		int epoch = 1;
+		do { train.iteration();
+		System.out.println("Epoch #"
+				+ epoch + " Error:" + train.getError());
+		epoch++;
+		} while(train.getError() > 0.001 && epoch < 15000);
+		// test the neural network
+		System.out.println("Neural Network Results:");
+		
+		double[][] finalResult = new double[input.length][];
+		int k=0;
+		Matrix matrix = synapseHiddenToOutput.getMatrix();
+		Double[] weightsToSave = matrix.toPackedArray();
+		
+		for (Double d : weightsToSave) {
+			System.out.print(d + " ");
+		}
+		WeightedSynapse newSynapse = new WeightedSynapse(new BasicLayer(new ActivationSigmoid(), true, BLOCK_SIZE/COMPRESS),
+			new BasicLayer(new ActivationLinear(), true, BLOCK_SIZE));
+		newSynapse.setMatrix(matrix);
+		
+		for(NeuralDataPair pair: trainingSet ) {
+			NeuralData intermediate = inputLayer.compute(pair.getInput());
+			intermediate = synapseInputToHidden.compute(intermediate);
+			intermediate = newSynapse.getFromLayer().compute(intermediate);
+			intermediate = newSynapse.compute(intermediate);
+			
+			NeuralData output = newSynapse.getToLayer().compute(intermediate);
+			
+			finalResult[k] = output.getData();
+			//finalResult[k] = network.compute(pair.getInput()).getData();
+			k++;
+		}
+		byte[] pixelData = CommonUtil.get1DArrayFrom2Darray(finalResult);
+		Image output = Image.getImage(pixelData, image.getWidth(), image.getHeight(), image.getType());
+		output.writeImage("hello.bmp");
+	}
+}

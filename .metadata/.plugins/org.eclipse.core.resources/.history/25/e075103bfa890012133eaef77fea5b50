@@ -1,0 +1,18 @@
+package test.com.usp.util;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.usp.util.DoubleToByte;
+
+public class DoubleToByteTest {
+
+	@Test
+	public void test() {
+		double[] input = {110, 255.678, 2.345678, -123.009};
+		DoubleToByte doubleToByte = new DoubleToByte(input);
+		
+	}
+
+}

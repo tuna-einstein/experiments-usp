@@ -1,0 +1,62 @@
+package com.usp.compress;
+
+import org.encog.engine.network.activation.ActivationLinear;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.mathutil.matrices.Matrix;
+import org.encog.neural.data.NeuralData;
+import org.encog.neural.data.basic.BasicNeuralData;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.synapse.WeightedSynapse;
+
+import com.usp.image.Image;
+import com.usp.util.OneDArrayEquivalent;
+import com.usp.util.TwoDArrayEquivalent;
+
+public class ImageDecompress {
+
+	private OneDArrayEquivalent weights;
+	private TwoDArrayEquivalent input;
+	private int hiddenUnitsCount;
+	private int outputUnitsCounts;
+	
+
+	public ImageDecompress(OneDArrayEquivalent weights,
+			TwoDArrayEquivalent input,
+			int hiddenUnitsCount,
+			int outputUnitsCounts) {
+		this.weights = weights;
+		this.input = input;
+		this.hiddenUnitsCount = hiddenUnitsCount;
+		this.outputUnitsCounts = outputUnitsCounts;
+	}
+	
+	public Image getImage() {
+		double[][] finalResult = new double[input.getRows()][input.getCols()];
+		
+		Double[] networkWeights = weights.getDoubleArray();
+	
+		
+		Matrix m = new Matrix(matrix.getRows(), matrix.getCols());
+		m.fromPackedArray(networkWeights, 0);
+		
+		WeightedSynapse newSynapse = new WeightedSynapse(new BasicLayer(new ActivationSigmoid(), true, BLOCK_SIZE/COMPRESS),
+			new BasicLayer(new ActivationLinear(), false, BLOCK_SIZE));
+		newSynapse.setMatrix(m);
+		
+		
+		k = 0;
+		for (double d[] : intermediateResult) {
+			NeuralData intermediate = newSynapse.compute(new BasicNeuralData(d));
+			
+			NeuralData output = newSynapse.getToLayer().compute(intermediate);
+			
+			finalResult[k] = output.getData();
+			k++;
+			//finalResult[k] = network.compute(pair.getInput()).getData();
+		}
+		
+		//byte[] pixelData = CommonUtil.get1DArrayFrom2Darray(finalResult);
+		byte[] pixelData = new TwoDArrayEquivalent(finalResult).getBytes();
+		Image output = Image.getImage(pixelData, image.getWidth(), image.getHeight(), image.getType());
+	}
+}

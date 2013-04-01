@@ -1,0 +1,101 @@
+package com.usp.util;
+
+public class TwoDArrayEquivalent {
+
+	private byte[] bytes;
+	private int rows;
+	// same as hidden units
+	private int cols;
+	private float max;
+	private float min;
+
+	public TwoDArrayEquivalent(double[][] array) {
+		setInfo(array);
+	}
+
+	public TwoDArrayEquivalent(byte[] bytes, int cols, float max, float min) {
+		this.bytes = bytes;
+		this.cols = cols;
+		this.rows = (int) Math.ceil(bytes.length * 1.0 / cols);
+		this.max = max;
+		this.min = min;
+	}
+
+	public TwoDArrayEquivalent(byte[] bytes, int cols) {
+		this.bytes = bytes;
+		this.cols = cols;
+		this.rows = (int) Math.ceil(bytes.length * 1.0 / cols);
+		this.max = 1;
+		this.min = 0;
+	}
+
+	public double[][] getDoubleEquivalent() {
+		double[][] result = new double[rows][cols];
+		int k = 0 ;
+		double factor = (max - min)/255.0;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if ( k < bytes.length) {
+					result[i][j] = (bytes[k] & 0xFF) * factor + min;
+				} else {
+					result[i][j] = 0;
+				}
+
+				k++;
+			}
+		}
+		return result;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public int getCols() {
+		return cols;
+	}
+
+	public float getMax() {
+		return max;
+	}
+
+	public float getMin() {
+		return min;
+	}
+
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	private void setMinAndMax(double[][] array) {
+		this.max = (float) array[0][0];
+		this.min = max;
+
+		for (double row[] : array) {
+			for (double d : row) {
+				if (max < d) {
+					max = (float) d;
+				}
+				if (min > d) {
+					min = (float) d;
+				}
+			}
+		}
+	}
+
+private void setInfo(double[][] array) {
+	setMinAndMax(array);
+	rows = array.length;
+	cols = array[0].length;
+	bytes = new byte[rows * cols];
+	int k = 0;
+	double factor = 255.0/(max - min);
+	for (int i = 0; i < rows ; i ++) {
+		for (int j = 0; j < cols; j++) {
+			bytes[k] = (byte) ((array[i][j] - min) * factor);
+			k++;
+		}
+	}
+
+}
+}

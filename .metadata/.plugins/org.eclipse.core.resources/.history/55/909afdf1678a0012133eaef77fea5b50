@@ -1,0 +1,15 @@
+package com.usp.compress;
+
+import com.usp.util.OneDArrayEquivalent;
+import com.usp.util.TwoDArrayEquivalent;
+
+public class ImageDecompress {
+
+	private OneDArrayEquivalent weights;
+	private TwoDArrayEquivalent input;
+
+	public ImageDecompress(OneDArrayEquivalent weights, TwoDArrayEquivalent input) {
+		this.weights = weights;
+		this.input = input;
+	}
+}

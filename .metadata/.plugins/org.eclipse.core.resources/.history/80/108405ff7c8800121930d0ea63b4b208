@@ -1,0 +1,37 @@
+package test.com.usp.image;
+
+import static org.junit.Assert.fail;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ImageTest {
+
+	private BufferedImage bufferedImage;
+ 
+    @Before
+    public void setUp() throws IOException {
+    	URL url = Test.class.getClassLoader().getResource("/data/buffet.bmp");
+        System.out.println(url.getPath());
+    	bufferedImage = ImageIO.read(new File("./data/buffet.bmp"));
+    }
+ 
+    @After
+    public void tearDown() {
+       
+    }
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}

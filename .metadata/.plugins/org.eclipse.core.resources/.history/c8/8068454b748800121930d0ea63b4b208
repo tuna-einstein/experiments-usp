@@ -1,0 +1,8 @@
+package com.usp.image;
+
+import java.awt.image.BufferedImage;
+
+public class Image {
+	private final BufferedImage image;
+
+}

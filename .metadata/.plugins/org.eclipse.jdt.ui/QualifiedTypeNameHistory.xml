@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="test.com.usp.image.ImageTest"/>
+<fullyQualifiedTypeName name="test.com.usp.util.CommonUtilTest"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="com.usp.image.Image"/>
+<fullyQualifiedTypeName name="org.encog.neural.networks.synapse.WeightedSynapse"/>
+<fullyQualifiedTypeName name="org.encog.engine.network.activation.ActivationSigmoid"/>
+<fullyQualifiedTypeName name="org.encog.engine.network.activation.ActivationLinear"/>
+<fullyQualifiedTypeName name="org.encog.neural.networks.training.propagation.back.Backpropagation"/>
+<fullyQualifiedTypeName name="org.encog.mathutil.matrices.Matrix"/>
+<fullyQualifiedTypeName name="com.usp.util.DoubleToByte"/>
+<fullyQualifiedTypeName name="com.usp.util.CommonUtil"/>
+<fullyQualifiedTypeName name="com.usp.util.ByteArrayEquivalent"/>
+<fullyQualifiedTypeName name="java.awt.image.BufferedImage"/>
+<fullyQualifiedTypeName name="java.io.DataOutputStream"/>
+<fullyQualifiedTypeName name="java.io.FileOutputStream"/>
+<fullyQualifiedTypeName name="java.io.DataInputStream"/>
+<fullyQualifiedTypeName name="javax.imageio.stream.FileImageInputStream"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="com.usp.util.OneDArrayEquivalent"/>
+<fullyQualifiedTypeName name="com.usp.util.TwoDArrayEquivalent"/>
+<fullyQualifiedTypeName name="com.usp.compress.ImageDecompress"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+</qualifiedTypeNameHistroy>

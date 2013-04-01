@@ -1,0 +1,57 @@
+package com.usp.util;
+
+public class DoubleToByte {
+
+	private double[] input;
+	private double min;
+	private double max;
+
+	public DoubleToByte(double[] input) {
+		this.input = input;
+		setMinMax();
+	}
+
+	public double getMin() {
+		return min;
+	}
+
+	public double getMax() {
+		return max;
+	}
+
+	public byte[] getByteValue() {
+		byte[] result = new byte[input.length];
+		int k = 0;
+		double factor = 255/(max - min);
+		for (double d : input) {
+			result[k] = (byte) ((d - min)*factor);
+			k++;
+		}
+		return result;
+	}
+
+	public static double[] getDoubleArray(byte[] vaules, double max, double min) {
+		double result[] = new double[vaules.length];
+		int k = 0;
+		double factor = (max - min) / 255;
+		for (byte b : vaules) {
+			result[k] = (b & 0xFF)*factor + min;
+			k++;
+		}
+		return result;
+	}
+
+	private void setMinMax() {
+		max = input[0];
+		min = input[0];
+		for (double d : input) {
+			if (max < d) {
+				max = d;
+			}
+			if (min > d) {
+				min = d;
+			}
+		}
+		
+	}
+}

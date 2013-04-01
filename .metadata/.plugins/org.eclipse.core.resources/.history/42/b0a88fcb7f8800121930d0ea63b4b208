@@ -1,0 +1,8 @@
+package com.usp.util;
+
+public class CommonUtil {
+
+	public static byte[][] get2DArray(byte[] input, int rowLength) {
+		
+	}
+}

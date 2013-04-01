@@ -1,0 +1,27 @@
+package test.com.usp.util;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.usp.util.DoubleToByte;
+
+public class DoubleToByteTest {
+
+	@Test
+	public void test() {
+		double[] input = {5, 2.345678, -10.009, 10};
+		DoubleToByte doubleToByte = new DoubleToByte(input);
+		for (byte b : doubleToByte.getByteValue()) {
+			System.out.print((b & 0xFF)+ " ");
+		}
+		System.out.println("");
+		double[] output = DoubleToByte.getDoubleArray(doubleToByte.getByteValue(),
+				doubleToByte.getMax(), doubleToByte.getMin());
+		for (double d : output) {
+			System.out.print(d + " ");
+		}
+		
+	}
+
+}

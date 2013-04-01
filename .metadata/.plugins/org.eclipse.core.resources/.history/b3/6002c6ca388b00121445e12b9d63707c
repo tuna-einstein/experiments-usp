@@ -1,0 +1,106 @@
+package com.usp.compress;
+
+import java.net.URL;
+
+import org.encog.engine.network.activation.ActivationLinear;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.mathutil.matrices.Matrix;
+import org.encog.neural.data.NeuralData;
+import org.encog.neural.data.NeuralDataPair;
+import org.encog.neural.data.NeuralDataSet;
+import org.encog.neural.data.basic.BasicNeuralData;
+import org.encog.neural.data.basic.BasicNeuralDataSet;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.synapse.Synapse;
+import org.encog.neural.networks.synapse.WeightedSynapse;
+import org.encog.neural.networks.training.Train;
+import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.util.logging.Logging;
+
+import com.usp.image.Image;
+import com.usp.util.TwoDArrayEquivalent;
+import com.usp.util.CommonUtil;
+import com.usp.util.OneDArrayEquivalent;
+public class ImageCompress {
+	
+	public static void main(final String args[]) throws Exception {
+		
+		if (args.length != 1 && args.length != 3 ) {
+			System.out.println("For compression: bmpImag blocksize compressRatio");
+			System.out.println("For decompression: compressedFile outputfile");
+			System.exit(0);
+		}
+		
+		// Decompress
+		if (args.length == 2) {
+			String compressFile = args[0];
+			Image output = ImageDecompress.read(compressFile);
+			output.writeImage(args[1]);
+			return;
+		}
+		
+		String bmpFile = args[0];
+		short blockSize = Short.valueOf(args[1]);
+		short compress = Short.valueOf(args[2]);
+		
+		Logging.stopConsoleLogging();
+		URL url = ImageCompress.class.getClassLoader().getResource(bmpFile);
+        System.out.println(url.getPath());
+		Image image = new Image(url.getPath());
+		TwoDArrayEquivalent inputObj = new TwoDArrayEquivalent(image.getByteArray(), blockSize);
+		double[][] input = inputObj.getDoubleEquivalent();
+		
+		BasicNetwork network = new BasicNetwork();
+		BasicLayer inputLayer = new BasicLayer(blockSize);
+		BasicLayer hiddenLayer = new BasicLayer(new ActivationSigmoid(), true, blockSize/compress);
+		BasicLayer outputLayer = new BasicLayer(new ActivationLinear(), false, blockSize);
+		
+		Synapse synapseInputToHidden = new WeightedSynapse(inputLayer,hiddenLayer); 
+		Synapse synapseHiddenToOutput = new WeightedSynapse(hiddenLayer,outputLayer); 
+		
+		inputLayer.getNext().add(synapseInputToHidden); 
+		hiddenLayer.getNext().add(synapseHiddenToOutput);
+		
+		network.tagLayer(BasicNetwork.TAG_INPUT, inputLayer);
+		network.tagLayer(BasicNetwork.TAG_OUTPUT, outputLayer);
+		network.getStructure().finalizeStructure();
+		network.reset();
+		
+		
+		NeuralDataSet trainingSet =
+		new BasicNeuralDataSet(input, input);
+		// train the neural network
+		final Train train = new ResilientPropagation(network, trainingSet);
+		
+		int epoch = 1;
+		do { train.iteration();
+		System.out.println("Epoch #"
+				+ epoch + " Error:" + train.getError());
+		epoch++;
+		} while(train.getError() > 0.001 && epoch < 15000);
+		// test the neural network
+		System.out.println("Neural Network Results:");
+		
+		double[][] intermediateResult = new double[input.length][];
+		int k=0;
+		
+		
+		for(NeuralDataPair pair: trainingSet ) {
+			NeuralData intermediate = inputLayer.compute(pair.getInput());
+			intermediate = synapseInputToHidden.compute(intermediate);
+			intermediate = hiddenLayer.compute(intermediate);
+			intermediateResult[k] = intermediate.getData();
+			k++;
+		}
+		
+		Matrix matrix = synapseHiddenToOutput.getMatrix();
+		Double[] weightsToSave = matrix.toPackedArray();
+		
+		OneDArrayEquivalent weights = new OneDArrayEquivalent(weightsToSave);
+		TwoDArrayEquivalent ir = new TwoDArrayEquivalent(intermediateResult);
+		System.out.println(ir.getRows());
+		ImageDecompress id = new ImageDecompress(weights, ir, blockSize);
+		id.write("compress.usp", image.getWidth(), image.getHeight());
+	}
+}

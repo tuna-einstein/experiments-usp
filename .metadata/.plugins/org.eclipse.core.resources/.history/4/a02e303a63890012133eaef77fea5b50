@@ -1,0 +1,10 @@
+package com.usp.util;
+
+public class DoubleToByte {
+
+	private double[] input;
+
+	public DoubleToByte(double[] input) {
+		this.input = input;
+	}
+}

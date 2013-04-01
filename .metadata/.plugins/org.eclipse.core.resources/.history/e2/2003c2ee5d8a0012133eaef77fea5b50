@@ -1,0 +1,15 @@
+package test.com.usp.util;
+
+import org.junit.Test;
+
+public class ByteArrayEquivalentTest {
+	@Test
+	public void test() {
+		double[][] input = {
+				{123.0, 456.789, 890},
+				{234.0, 678.789, 453},
+				{129.0, 456.789, 123.56},
+		};
+		
+	}
+}
