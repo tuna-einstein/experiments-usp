@@ -1,0 +1,24 @@
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+dependencies {
+    isFloatLibrary = isFloatLibrary.toBoolean()
+    if (isFloatLibrary) {
+        compile project(':usp_lib_float')
+    } else {
+        compile project(':usp_lib_int')
+    }
+}
+
+apply plugin:'application'
+mainClassName = mainClass

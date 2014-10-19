@@ -1,0 +1,36 @@
+repositories { // we are depending on Junit library for
+// unit testing and gradle looks for them in maven repository.
+// A repository is really just a collection of files, organized
+// by group, name and version. 
+    mavenCentral()
+}
+
+// The java  plugin adds gradle tasks for building, testing, and
+// assembling etc. The Java plugin defines two standard source sets, called main and test.
+// The main source set contains your production source code, which is compiled
+// and assembled into a JAR file. The test source set contains your test source code,
+// which is compiled and executed using JUnit or TestNG. 
+apply plugin: 'java'
+
+// A source set is simply a group of source files which are compiled and executed together.
+// These source files may include Java source files and resource files
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'src/javatests'
+        }
+    }
+}
+
+dependencies {
+// It states that junit 4.10 is required to compile the project's tests.
+// Gradle will look in the Maven central repository for any dependencies
+// that are required.
+    testCompile 'junit:junit:4.10'
+}

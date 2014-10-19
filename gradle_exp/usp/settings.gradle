@@ -1,0 +1,5 @@
+include 'usp'
+include ':usp_lib_int'
+project(':usp_lib_int').projectDir = new File('../usp_lib_int')
+include ':usp_lib_float'
+project(':usp_lib_float').projectDir = new File('../usp_lib_float')
